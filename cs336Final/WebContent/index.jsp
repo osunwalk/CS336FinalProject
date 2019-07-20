@@ -136,7 +136,7 @@
 				Password:<br>
 				<input type="password" name="password" id="passTXT" maxlength="50"><br>
 				<input type="text" name="accountType" value="customer">
-<!-- onClick=displayError("isFound")  -->				<input type="submit"><br>
+<!-- onClick=displayError("isFound")  -->				<input type="submit" onclick="javascript:test()"><br>
 				<a href="register.jsp">Make an account</a>
 				<p id="error"></p>
 			</form>
