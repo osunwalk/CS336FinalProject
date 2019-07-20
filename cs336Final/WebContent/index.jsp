@@ -4,6 +4,7 @@
 <%@ page import="javax.servlet.http.*,javax.servlet.*"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
 <html>
 	<head>
 		<title>Company Name</title>
@@ -30,28 +31,7 @@
 				text-decoration: underline;
 			}
 		</style>
-	</head>
-	<body>
-		<div id="header">
-			<p id="loginText" onclick="showHide()">Log in</p>
-			<div id="loginDiv">
-			<form action="red.jsp" method="get" target="mainFrame">
-				Username:<br>
-				<input type="text" name="userName" id="userTXT" maxlength="50"><br>
-				Password:<br>
-				<input type="password" name="password" id="passTXT" maxlength="50"><br>
-				<input type="text" name="accountType" value="customer">
-				<input type="submit"><br>
-				<a href="register.jsp">Make an account</a>
-			</form>
-			</div>
-		</div>
-		<hr>
-		<iframe id="main" name="mainFrame" src="red.jsp">
-
-		</iframe>
-	</body>
-	<script>
+		<script>
 			function showHide()
 			{
 				var CurrentVisibility = document.getElementById("loginDiv").style.visibility;
@@ -75,14 +55,99 @@
 			}
 			function changeToLogin()
 			{
-				document.getElementById("header").innerHTML = '<p id="loginText" onclick="showHide()">Log in</p><div id="loginDiv"><form 
+				document.getElementById("header").innerHTML = '<p id="loginText" onclick="showHide()">Log in</p><div id="loginDiv"><form action="red.jsp" method="get" target="mainFrame">Username:<br><input type="text" name="userName" id="userTXT"><br>Password:<br><input type="password" name="password" id="passTXT"><br><input type="text" name="accountType" value="user"><input type="submit"><br><a href="register.jsp">Make an account</a></form></div>'
+			}
+			function displayError(errorType)
+			{
+				if(errorType == "notFound")
+				{
+					document.getElementById("error").innerHTML = "Incorrect username or password";
+				}
+				else
+				{
+					if(errorType == "isFound")
+					{
+						document.getElementById("error").innerHTML = "Username is already taken";
+					}
+					else
+					{
+						if(errorType == "success")
+						{
+							document.getElementById("error").innerHTML = "";
+						}
+						else
+						{
+							document.getElementById("error").innerHTML = "Unknown error type received";
+						}
+					}
+				}
+			}
+			function test()
+			{
+				<%
+				try {
+					
+					//Get the database connection
 
-action="red.jsp" method="get" target="mainFrame">Username:<br><input type="text" name="userName" id="userTXT"><br>Password:<br><input type="password" 
+							String url = "jdbc:mysql://gordonsdatabase.ct254jupltiy.us-east-2.rds.amazonaws.com:3306/betterThanKayak";
+							Class.forName("com.mysql.jdbc.Driver");
+							String user = request.getParameter("userName");
+							String pass = request.getParameter("password");
+							String type;
+							
+							if(user=="")
+								return;
+					
+							Connection con = DriverManager.getConnection(url, "root", "12345678");
+							Statement stmt = con.createStatement();
+								String searchuser = "SELECT * FROM users where users.username=" + user + "and users.password=" + pass	;
+												
+							//Run the query against the database.
+							ResultSet result = stmt.executeQuery(searchuser);
+							if(result.next() == false){
+								%>								
+								displayError("notFound");								
+								<% 
+							}
+							else{
+								String query = "SELECT designation FROM users where users.username=" +user;
+								result = stmt.executeQuery(query);
+								type = result.getString(2);
+								%>
+								document.getElementById("main").src = "red.jsp?accountType="+type;
+								<%
+							}
 
-name="password" id="passTXT"><br><input type="text" name="accountType" value="user"><input type="submit"><br><a href="register.jsp">Make an 
-
-account</a></form></div>'
+								
+						} catch (Exception e) {
+							out.print(e);
+						}
+					%>		
 			}
 		</script>
+	</head>
+	<body>
+		<div id="header">
+			<p id="loginText" onclick=showHide()>Log in</p>
+			<div id="loginDiv">
+			<form action="javascript:test();" method="get">
+				Username:<br>
+				<input type="text" name="userName" id="userTXT" maxlength="50"><br>
+				Password:<br>
+				<input type="password" name="password" id="passTXT" maxlength="50"><br>
+				<input type="text" name="accountType" value="customer">
+<!-- onClick=displayError("isFound")  -->				<input type="submit"><br>
+				<a href="register.jsp">Make an account</a>
+				<p id="error"></p>
+			</form>
+			</div>
+		</div>
+		<hr>
+		<iframe id="main" name="mainFrame" src="red.jsp">
+
+		</iframe>
+
+	</body>
 </html>
+
 
