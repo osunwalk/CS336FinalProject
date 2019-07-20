@@ -84,44 +84,58 @@
 			}
 			function test()
 			{
+				
 				<%
-				try {
+				String user = request.getParameter("userName");
+				String pass = request.getParameter("password");
+				if(user==null && pass==null){
 					
-					//Get the database connection
-
-							String url = "jdbc:mysql://gordonsdatabase.ct254jupltiy.us-east-2.rds.amazonaws.com:3306/betterThanKayak";
-							Class.forName("com.mysql.jdbc.Driver");
-							String user = request.getParameter("userName");
-							String pass = request.getParameter("password");
-							String type;
-							
-							if(user=="")
-								return;
-					
-							Connection con = DriverManager.getConnection(url, "root", "12345678");
-							Statement stmt = con.createStatement();
-								String searchuser = "SELECT * FROM users where users.username=" + user + "and users.password=" + pass	;
-												
-							//Run the query against the database.
-							ResultSet result = stmt.executeQuery(searchuser);
-							if(result.next() == false){
-								%>								
-								displayError("notFound");								
-								<% 
-							}
-							else{
-								String query = "SELECT designation FROM users where users.username=" +user;
-								result = stmt.executeQuery(query);
-								type = result.getString(2);
-								%>
-								document.getElementById("main").src = "red.jsp?accountType="+type;
-								<%
-							}
-
+				}
+				else
+				{
+					try {
+						
+						//Get the database connection
+	
+								String url = "jdbc:mysql://gordonsdatabase.ct254jupltiy.us-east-2.rds.amazonaws.com/betterThanKayak";
+								Class.forName("com.mysql.jdbc.Driver");
+	
+								String type;
+								System.out.println("Username:" + user + "\nPassword:" + pass);
 								
-						} catch (Exception e) {
-							out.print(e);
-						}
+									
+						
+								Connection con = DriverManager.getConnection(url, "root", "12345678");
+								
+								String searchuser = "SELECT * FROM users where username = " + user + " AND password = " + pass;
+								System.out.println(searchuser);
+								//Run the query against the database.
+
+								Statement stmt = con.createStatement();
+								ResultSet result = stmt.executeQuery(searchuser);
+								System.out.println("what");
+								System.out.println(result.next());
+								if(result.next() == false){
+									System.out.println("dne");
+									%>								
+									displayError("notFound");								
+									<% 
+								}
+								else{
+									System.out.println("found it");
+									String query = "SELECT designation FROM users where users.username=" +user;
+									result = stmt.executeQuery(query);
+									type = result.getString(2);
+									%>
+									document.getElementById("main").src = "red.jsp?accountType="+type;
+									<%
+								}	
+
+									
+							} catch (Exception e) {
+								System.out.println("error");
+							}
+					}
 					%>		
 			}
 		</script>
@@ -130,7 +144,7 @@
 		<div id="header">
 			<p id="loginText" onclick=showHide()>Log in</p>
 			<div id="loginDiv">
-			<form action="javascript:test();" method="get">
+			<form action="" method="get">
 				Username:<br>
 				<input type="text" name="userName" id="userTXT" maxlength="50"><br>
 				Password:<br>
