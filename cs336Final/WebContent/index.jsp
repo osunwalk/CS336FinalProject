@@ -82,7 +82,7 @@
 					}
 				}
 			}
-			function test()
+				function test()
 			{
 				
 				<%
@@ -98,20 +98,21 @@
 						//Get the database connection
 	
 								String url = "jdbc:mysql://gordonsdatabase.ct254jupltiy.us-east-2.rds.amazonaws.com/betterThanKayak";
-								Class.forName("com.mysql.jdbc.Driver");
+								
 	
 								String type;
 								System.out.println("Username:" + user + "\nPassword:" + pass);
 								
 									
-						
+								Class.forName("com.mysql.jdbc.Driver");
 								Connection con = DriverManager.getConnection(url, "root", "12345678");
 								
-								String searchuser = "SELECT * FROM users where username = " + user + " AND password = " + pass;
-								System.out.println(searchuser);
+								
 								//Run the query against the database.
 
 								Statement stmt = con.createStatement();
+								String searchuser = "SELECT * FROM users where username = " + user + " AND password = " + pass;
+								System.out.println(searchuser);
 								ResultSet result = stmt.executeQuery(searchuser);
 								System.out.println("what");
 								System.out.println(result.next());
